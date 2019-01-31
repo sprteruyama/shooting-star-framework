@@ -1,0 +1,26 @@
+{
+    "name": "sprteruyama/shooting-star-framework",
+    "description": "The Lightweight PHP Framework Shooting-Star",
+    "version": "0.0.1",
+    "type": "library",
+    "license": "MIT",
+    "minimum-stability": "stable",
+    "authors": [
+        {
+            "name": "S.Teruyama",
+            "email": "teruyama@springboard-inc.jp"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "ShootingStar\\": "src/"
+        },
+        "files": [
+            "src/init.php"
+        ]
+    },
+    "require": {
+        "ext-pdo": "*",
+        "ext-json": "*"
+    }
+}
