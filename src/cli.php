@@ -58,7 +58,7 @@ require_once CLI_DIR . "/{$className}.php";
 $command = new $className;
 $method = Base::snakeToPascal($argv[2]);
 $command->args = array_slice($argv, 3, count($argv) - 3);
-$primitiveMethods = get_class_methods('Core\\Command');
+$primitiveMethods = get_class_methods('ShootingStar\\Command');
 if (array_search($method, $primitiveMethods) !== false) {
     $method = 'main';
 }
