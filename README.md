@@ -6,7 +6,7 @@
 
 ## 動作環境
 
-PHP7.0以上  
+PHP7.0以上（5.4系にて確認中）  
 MYSQL or MariaDB及び左記に必要なPHPパッケージ
 
 ## 主な特徴
@@ -30,3 +30,12 @@ $ composer create-project sprteruyama/shooting-star-framework-app [app_dir] --pr
 - とある大手動画配信サーバーの一部システムに採用されています。  
 - とあるLINEのbotがこれで動いてます
 
+## 寄付のお願い
+
+本プロジェクトのより良い発展のため、ご寄付を募っております。  
+いただいた資金は、開発環境（PC、ソフトウェア、周辺機器）に充てさせていただきます。  
+なお、贈与として税務処理を行います。
+
+https://www.amazon.co.jp/dp/B004N3APGO/
+
+terushu@yahoo.co.jp宛にお願いいたします。
