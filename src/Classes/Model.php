@@ -68,8 +68,10 @@ class Model extends Base
                         break;
                     case 'sqlite':
                         $databasePath = SHARE_DIR . '/' . $host;
-                        mkdir($databasePath);
-                        chmod($databasePath, 0777);
+                        if (!file_exists($databasePath)) {
+                            mkdir($databasePath);
+                            chmod($databasePath, 0777);
+                        }
                         $this->db = new PDO("sqlite:{$databasePath}/{$this->database}.db", $this->user, $this->password, [PDO::ATTR_EMULATE_PREPARES => false, PDO::ATTR_PERSISTENT => true, PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION]);
                         break;
                 }
