@@ -62,6 +62,7 @@ class Controller extends Base
 
     public function afterHook()
     {
+        $this->view->layout = $this->layout;
         if ($this->autoRender) {
             $this->render();
         }
