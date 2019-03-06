@@ -67,7 +67,9 @@ class Model extends Base
                         $this->db = new PDO("mysql:host={$this->host};dbname={$this->database};charset=utf8", $this->user, $this->password, [PDO::ATTR_EMULATE_PREPARES => false, PDO::ATTR_PERSISTENT => true, PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION]);
                         break;
                     case 'sqlite':
-                        $databasePath = SHARE_DIR . '/' . $this->host;
+                        $databasePath = SHARE_DIR . '/' . $host;
+                        mkdir($databasePath);
+                        chmod($databasePath, 0777);
                         $this->db = new PDO("sqlite:{$databasePath}/{$this->database}.db", $this->user, $this->password, [PDO::ATTR_EMULATE_PREPARES => false, PDO::ATTR_PERSISTENT => true, PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION]);
                         break;
                 }
