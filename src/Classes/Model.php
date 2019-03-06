@@ -22,6 +22,7 @@ class Model extends Base
     public $table = null;
     public $alias = null;
     public $hasNoDateFields = false;
+    public $engine = null;
     public $host = null;
     public $hostSlave = null;
     public $user = null;
@@ -37,6 +38,11 @@ class Model extends Base
         parent::__construct();
     }
 
+    /**
+     * @param $sql
+     * @param bool $forceMaster
+     * @return bool|PDO
+     */
     public function getConnection($sql, $forceMaster = false)
     {
 
@@ -44,6 +50,8 @@ class Model extends Base
             if (!$this->db) {
                 $values = Config::get('database.' . $this->config);
                 extract($values);
+                /** @noinspection PhpUndefinedVariableInspection */
+                $this->engine = isset($engine) ? $engine : 'mysql';
                 /** @noinspection PhpUndefinedVariableInspection */
                 $this->host = $host;
                 /** @noinspection PhpUndefinedVariableInspection */
@@ -54,7 +62,14 @@ class Model extends Base
                 $this->password = $password;
                 /** @noinspection PhpUndefinedVariableInspection */
                 $this->database = $database;
-                $this->db = new PDO("mysql:host={$this->host};dbname={$this->database};charset=utf8", $this->user, $this->password, [PDO::ATTR_EMULATE_PREPARES => false, PDO::ATTR_PERSISTENT => true, PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION]);
+                switch ($this->engine) {
+                    case 'mysql':
+                        $this->db = new PDO("mysql:host={$this->host};dbname={$this->database};charset=utf8", $this->user, $this->password, [PDO::ATTR_EMULATE_PREPARES => false, PDO::ATTR_PERSISTENT => true, PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION]);
+                        break;
+                    case 'sqlite':
+                        $this->db = new PDO("sqlite:{$this->host}/{$this->database}.db", $this->user, $this->password, [PDO::ATTR_EMULATE_PREPARES => false, PDO::ATTR_PERSISTENT => true, PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION]);
+                        break;
+                }
             }
             if ($forceMaster) {
                 return $this->db;
