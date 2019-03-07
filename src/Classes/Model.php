@@ -7,6 +7,8 @@ use PDO;
 use PDOException;
 use PDOStatement;
 
+define('DB_MYSQL', 'mysql');
+define('DB_SQLITE', 'sqlite');
 define('SQL_DATETIME_FORMAT', 'Y-m-d H:i:s');
 define('SQL_DATE_FORMAT', 'Y-m-d');
 
@@ -63,10 +65,10 @@ class Model extends Base
                 /** @noinspection PhpUndefinedVariableInspection */
                 $this->database = $database;
                 switch ($this->engine) {
-                    case 'mysql':
+                    case DB_MYSQL:
                         $this->db = new PDO("mysql:host={$this->host};dbname={$this->database};charset=utf8", $this->user, $this->password, [PDO::ATTR_EMULATE_PREPARES => false, PDO::ATTR_PERSISTENT => true, PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION]);
                         break;
-                    case 'sqlite':
+                    case DB_SQLITE:
                         $databasePath = SHARE_DIR . '/' . $host;
                         if (!file_exists($databasePath)) {
                             mkdir($databasePath);
@@ -313,7 +315,16 @@ class Model extends Base
             }
             $data['created'] = $now;
         }
-        $sql = "INSERT INTO {$this->table} SET " . $this->createSets($data);
+        if ($this->engine == DB_SQLITE) {
+            $sets = $this->createSets($data);
+            if (preg_match_all('/([^=,]+)=(:[^=,]+)/', $sets, $matches, PREG_PATTERN_ORDER)) {
+                $sql = "INSERT INTO {$this->table}(" . implode(',', $matches[1]) . ') VALUES(' . implode(',', $matches[2]) . ')';
+            } else {
+                return false;
+            }
+        } else {
+            $sql = "INSERT INTO {$this->table} SET " . $this->createSets($data);
+        }
         return $this->query($sql, $data) !== false;
     }
 
