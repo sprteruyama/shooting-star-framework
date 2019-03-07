@@ -32,6 +32,10 @@ $ composer create-project sprteruyama/shooting-star-framework-app [app_dir] --pr
 - とあるLINEのbotがこれで動いてます
 - とある言語解析プロジェクトに採用されています
 
+## 注意事項
+
+全てのテーブルはmodified及びcreatedをdatetime型で持つ必要があります。
+
 ## 寄付のお願い
 
 本プロジェクトのより良い発展のため、ご寄付を募っております。  
