@@ -83,12 +83,12 @@ class Controller extends Base
         $this->view->sets($vars);
     }
 
-    public function validate($rules, $vars)
+    public function validate($rules, $vars, $isAll = false)
     {
         foreach ($vars as $name => $value) {
             $vars[$name] = $this->request->data($name, $value);
         }
-        $this->errors = array_merge($this->errors, $this->validator->validate($rules, $vars));
+        $this->errors = array_merge($this->errors, $this->validator->validate($rules, $vars, $isAll));
         $this->sets($vars);
         $this->set('errors', $this->errors);
         return $vars;

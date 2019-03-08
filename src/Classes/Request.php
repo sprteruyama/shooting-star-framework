@@ -59,4 +59,9 @@ class Request extends Base
         return !empty($this->posts);
     }
 
+    public function json()
+    {
+        return json_decode($this->body, true);
+    }
+
 }

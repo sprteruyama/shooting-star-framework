@@ -142,7 +142,9 @@ class Model extends Base
                 Log::out($sql, 'sql.log');
                 Log::out(print_r($params, true), 'sql.log');
             }
-            return $statement->fetchAll();
+            $result = $statement->fetchAll();
+            $statement->closeCursor();
+            return $result;
         } catch (PDOException $e) {
             if (Config::get('debug')) {
                 echo $e->getMessage();
@@ -251,7 +253,9 @@ class Model extends Base
     {
         $statement = $this->execute($this->createSelectSql($fields, $tail), $params, $forceMaster);
         if ($statement) {
-            return $this->fetch($statement);
+            $result = $this->fetch($statement);
+            $statement->closeCursor();
+            return $result;
         } else {
             return false;
         }

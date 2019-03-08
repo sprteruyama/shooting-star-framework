@@ -56,7 +56,9 @@ class Base
 
     public function loadLibrary($name)
     {
-        ClassLoader::loadClass($name, LIBS_DIR);
+        if (!ClassLoader::loadClass($name, LIBS_DIR)) {
+            ClassLoader::loadClass($name, CORE_DIR . '/Classes/Libs');
+        }
         $this->$name = new $name();
     }
 

@@ -24,8 +24,15 @@ class Validator extends Base
     ];
     public $errors = [];
 
-    public function validate($rules, $vars)
+    public function validate($rules, $vars, $isAll = false)
     {
+        if ($isAll) {
+            foreach ($rules as $key => $value) {
+                if (!isset($vars[$key])) {
+                    $vars[$key] = null;
+                }
+            }
+        }
         $errors = [];
         foreach ($vars as $name => $value) {
             foreach ($rules as $key => $items) {
@@ -69,7 +76,7 @@ class Validator extends Base
                                 if (!isset($errors[$name])) {
                                     $errors[$name] = [];
                                 }
-                                $errors[$name][] = $item[1];
+                                $errors[$name][] = isset($item[1]) ? $item[1] : 'ERROR';
                                 if (isset($item[2]) && $item[2]) {
                                     break;
                                 }
