@@ -12,7 +12,7 @@ if (isset($argv[1]) && $argv[1] == 'init') {
     file_put_contents(PUBLIC_DIR . '/.htaccess', $htaccess);
     echo "RuleBase: {$urlRoot}\n";
     echo "modified .htaccess.\n";
-    $writable = [TMP_DIR, LOG_DIR, SHARE_DIR];
+    $writable = [TMP_DIR, LOG_DIR, SHARE_DIR, SHARE_DIR . '/session'];
     foreach (Config::get('url.writable') as $dir) {
         $writable[] = PUBLIC_DIR . $dir;
     };
