@@ -90,7 +90,7 @@ class Router
         return;
     }
 
-    public static function url($path, $isFull = false)
+    public static function url($path, $isFull = false, $versionName = null)
     {
         $path = str_replace(PUBLIC_DIR, '', $path);
         $url = '';
@@ -109,6 +109,15 @@ class Router
         $url .= $path;
         if ($url && $url[strlen($url) - 1] == '/') {
             $url = substr($url, 0, -1);
+        }
+        $filepath = PUBLIC_DIR . $url;
+        if ($versionName != null && file_exists($filepath)) {
+            $version = filemtime($filepath);
+            if (strpos($url, '?') !== false) {
+                $url .= "&{$versionName}={$version}";
+            } else {
+                $url .= "?{$versionName}={$version}";
+            }
         }
         return $url;
     }
