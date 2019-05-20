@@ -4,6 +4,7 @@ namespace ShootingStar;
 
 use Exception;
 
+define('VALIDATOR_NOT_EXISTS', '$_self===null');
 define('VALIDATOR_NOT_EMPTY', '/^$/');
 define('VALIDATOR_NOT_NUMERIC', '/[^0-9]+/');
 
@@ -67,7 +68,7 @@ class Validator extends Base
                                 $isHit = !preg_match($regexp, $tempValue);
                             } else {
                                 try {
-                                    $isHit = $this->safeEval($item[0], $vars);
+                                    $isHit = $this->safeEval($item[0], array_merge(['_self' => $value], $vars));
                                 } catch (Exception $e) {
                                     $errors['system'] = ['System Error.'];
                                 }

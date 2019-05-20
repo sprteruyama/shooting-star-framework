@@ -17,9 +17,9 @@ class Command extends Base
         $this->help();
     }
 
-    public function out($message)
+    public function out($message, $noLF = false)
     {
-        echo $message . "\n";
+        echo $message . ($noLF ? '' : "\n");
     }
 
     public function help()
@@ -50,11 +50,14 @@ class Command extends Base
         }
     }
 
-    public function getInput()
+    public function getInput($count = 0)
     {
         $result = '';
         while (!feof(STDIN)) {
             $result .= fgets(STDIN);
+            if ($count && strlen($result) >= $count) {
+                break;
+            }
         }
         return $result;
     }

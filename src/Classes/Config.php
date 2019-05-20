@@ -73,10 +73,10 @@ $envDir = [
 if (!isset($envDir[ENV])) {
     die('環境指定ENVが正しくありません。');
 }
+loadConfig(CONFIG_BASE_DIR . '/common');
 $configDir = CONFIG_BASE_DIR . '/' . $envDir[ENV];
 define('CONFIG_DIR', $configDir);
 loadConfig($configDir);
-loadConfig(CONFIG_BASE_DIR . '/common');
 
 function loadConfig($configDir)
 {
