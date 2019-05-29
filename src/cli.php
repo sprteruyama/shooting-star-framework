@@ -51,7 +51,7 @@ if (!isset($argv[2])) {
 }
 $className = Base::snakeToPascal($argv[1]) . 'Command';
 if (!file_exists(CLI_DIR . "/{$className}.php")) {
-    echo "Command $command is not implemented.\n";
+    echo "Command {$argv[1]} is not implemented.\n";
     exit();
 }
 /** @noinspection PhpIncludeInspection */
