@@ -50,6 +50,10 @@ if (!isset($argv[2])) {
     $argv[2] = 'main';
 }
 $className = Base::snakeToPascal($argv[1]) . 'Command';
+if (!file_exists(CLI_DIR . "/{$className}.php")) {
+    echo "Command $command is not implemented.\n";
+    exit();
+}
 /** @noinspection PhpIncludeInspection */
 require_once CLI_DIR . "/BaseCommand.php";
 /** @noinspection PhpIncludeInspection */

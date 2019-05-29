@@ -30,6 +30,7 @@ class Model extends Base
     public $user = null;
     public $password = null;
     public $database = null;
+    public $charset = null;
     public $db = null;
     public $slaveDB = null;
     public $lastError;
@@ -63,10 +64,12 @@ class Model extends Base
                 /** @noinspection PhpUndefinedVariableInspection */
                 $this->password = $password;
                 /** @noinspection PhpUndefinedVariableInspection */
-                $this->database = $database;
+                $this->database = isset($database) ? $database : 'localhost';
+                /** @noinspection PhpUndefinedVariableInspection */
+                $this->charset = isset($charset) ? $charset : 'utf8mb4';
                 switch ($this->engine) {
                     case DB_MYSQL:
-                        $this->db = new PDO("mysql:host={$this->host};dbname={$this->database};charset=utf8", $this->user, $this->password, [PDO::ATTR_EMULATE_PREPARES => false, PDO::ATTR_PERSISTENT => true, PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION]);
+                        $this->db = new PDO("mysql:host={$this->host};dbname={$this->database};charset={$this->charset}", $this->user, $this->password, [PDO::ATTR_EMULATE_PREPARES => false, PDO::ATTR_PERSISTENT => true, PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION]);
                         break;
                     case DB_SQLITE:
                         $databasePath = SHARE_DIR . '/' . $host;
@@ -88,7 +91,7 @@ class Model extends Base
                 foreach ($slaveCommands as $slaveCommand) {
                     if (strpos($lowerSql, $slaveCommand) === 0) {
                         if (!$this->slaveDB) {
-                            $this->slaveDB = new PDO("mysql:host={$this->hostSlave};dbname={$this->database};charset=utf8", $this->user, $this->password, [PDO::ATTR_EMULATE_PREPARES => false, PDO::ATTR_PERSISTENT => true, PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION]);
+                            $this->slaveDB = new PDO("mysql:host={$this->hostSlave};dbname={$this->database};charset={$this->charset}", $this->user, $this->password, [PDO::ATTR_EMULATE_PREPARES => false, PDO::ATTR_PERSISTENT => true, PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION]);
                         }
                         return $this->slaveDB;
                     }
