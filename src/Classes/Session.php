@@ -48,4 +48,22 @@ class Session
     {
         session_destroy();
     }
+
+    public function token($key = '')
+    {
+        $token = md5(Config::get('salt') . date('YmdHis') . rand(0, 9999));
+        $this->set('__token__' . $key, $token);
+        return $token;
+    }
+
+    public function validateToken($token)
+    {
+        foreach ($_SESSION as $key => $value) {
+            if (strpos($key, '__token__') === 0 && $value == $token) {
+                unset($_SESSION[$key]);
+                return $key;
+            }
+        }
+        return false;
+    }
 }

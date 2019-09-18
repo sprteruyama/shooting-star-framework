@@ -101,19 +101,23 @@ class View extends Base
 
     private function outHtmlTag($tag, $options, $innerText = null)
     {
-        echo "<{$tag} ";
+        $html = '';
+        $html .= "<{$tag} ";
         foreach ($options as $key => $value) {
             if ($value !== false) {
-                echo "{$key}=\"{$value}\" ";
+                $html .= "{$key}=\"{$value}\" ";
             } else {
-                echo "{$key} ";
+                $html .= "{$key} ";
             }
         }
-        echo '>';
+        $html .= '>';
         if ($innerText !== null) {
             echo $innerText;
         }
-        echo "</{$tag}>";
+        if ($tag != 'input') {
+            $html .= "</{$tag}>";
+        }
+        return $html;
     }
 
     private function outFormTag($tag, $name, $options, $innerText = null)
@@ -128,7 +132,20 @@ class View extends Base
         if (!$innerText && !isset($options['value']) && $value !== null) {
             $options['value'] = $value;
         }
-        $this->outHtmlTag($tag, $options, $innerText);
+        return $this->outHtmlTag($tag, $options, $innerText);
+    }
+
+    public function startForm($action = '', $method = 'POST')
+    {
+        $token = Session::getInstance()->token();
+        $html = "<form action='$action' method='$method'>";
+        $html .= "<input name='__token__' type='hidden' value='$token'>";
+        return $html;
+    }
+
+    public function endForm()
+    {
+        return '</form>';
     }
 
     public function input($name, $options = [], $type = 'text')
@@ -136,12 +153,12 @@ class View extends Base
         if (!isset($options['type'])) {
             $options['type'] = $type;
         }
-        $this->outFormTag('input', $name, $options);
+        return $this->outFormTag('input', $name, $options);
     }
 
     public function password($name, $options = [])
     {
-        $this->input($name, $options, 'password');
+        return $this->input($name, $options, 'password');
     }
 
     public function radio($name, $index, $label, $options = [])
@@ -159,7 +176,7 @@ class View extends Base
         if ($value !== null && $index == $value) {
             $options['checked'] = 'checked';
         }
-        $this->outHtmlTag('input', $options, $label);
+        return $this->outHtmlTag('input', $options, $label);
     }
 
     public function checkbox($name, $index, $label, $options = [])
@@ -177,22 +194,22 @@ class View extends Base
         if ($value !== null && is_array($value) && array_search($index, $value) !== false) {
             $options['checked'] = 'checked';
         }
-        $this->outHtmlTag('input', $options, $label);
+        return $this->outHtmlTag('input', $options, $label);
     }
 
     public function file($name, $options = [])
     {
-        $this->input($name, $options, 'file');
+        return $this->input($name, $options, 'file');
     }
 
     public function hidden($name, $options = [])
     {
-        $this->input($name, $options, 'hidden');
+        return $this->input($name, $options, 'hidden');
     }
 
     public function textarea($name, $options = [])
     {
-        $this->outFormTag('textarea', $name, $options, true);
+        return $this->outFormTag('textarea', $name, $options, true);
     }
 
     public function select($name, $labels, $items = [], $options = [])
@@ -211,13 +228,23 @@ class View extends Base
             }
             $innerHtml .= "<option value=\"{$key}\" label=\"{$label}\" {$selected}>{$label}</option>";
         }
-        $this->outHtmlTag('select', $options, $innerHtml);
+        return $this->outHtmlTag('select', $options, $innerHtml);
     }
 
     public function selectMulti($name, $labels, $items = [], $options = [])
     {
         $items['multiple'] = false;
-        $this->select($name, $labels, $items, $options);
+        return $this->select($name, $labels, $items, $options);
+    }
+
+    public function button($name, $label, $options = [])
+    {
+        return $this->input($name, ['value' => $label, 'type' => 'button'] + $options);
+    }
+
+    public function submit($label = 'Submit', $options = [])
+    {
+        return $this->input('submit', ['value' => $label, 'type' => 'submit'] + $options);
     }
 
     public function error($name, $template = null, $separator = '<br/>')
@@ -231,7 +258,7 @@ class View extends Base
         foreach ($messages as $message) {
             $outs[] = sprintf($template, $message);
         }
-        echo implode($separator, $outs);
+        return implode($separator, $outs);
     }
 
     public static function out404()

@@ -123,6 +123,17 @@ class Controller extends Base
         return $vars;
     }
 
+    public function checkCSRF()
+    {
+        if ($this->request->isPost()) {
+            $token = $this->request->posts('__token__');
+            if (Session::getInstance()->validateToken($token) === false) {
+                View::out500();
+                exit();
+            }
+        }
+    }
+
     private function completionArray(&$array, $base)
     {
         if (is_array($array)) {
