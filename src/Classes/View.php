@@ -268,6 +268,13 @@ class View extends Base
         $view->render('404', 'error');
     }
 
+    public static function out403()
+    {
+        http_response_code(403);
+        $view = new View();
+        $view->render('403', 'error');
+    }
+
     public static function out401()
     {
         header('WWW-Authenticate: Basic realm="Test Member Only"');

@@ -128,7 +128,7 @@ class Controller extends Base
         if ($this->request->isPost()) {
             $token = $this->request->posts('__token__');
             if (Session::getInstance()->validateToken($token) === false) {
-                View::out500();
+                View::out403();
                 exit();
             }
         }

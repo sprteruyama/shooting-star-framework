@@ -4,9 +4,11 @@ namespace ShootingStar;
 
 use Exception;
 
-define('VALIDATOR_NOT_EXISTS', '$_self===null');
-define('VALIDATOR_NOT_EMPTY', '/^$/');
-define('VALIDATOR_NOT_NUMERIC', '/[^0-9]+/');
+define('VALIDATOR_EXISTS', '$_self!==null');
+define('VALIDATOR_EMPTY', '/^$/');
+define('VALIDATOR_NOT_EMPTY', '/^.+$/');
+define('VALIDATOR_NUMERIC', '/^[0-9\.]+$/');
+define('VALIDATOR_INT', '/^[0-9]+$/');
 
 class Validator extends Base
 {
@@ -37,6 +39,9 @@ class Validator extends Base
         $errors = [];
         foreach ($vars as $name => $value) {
             foreach ($rules as $key => $items) {
+                if (!is_array($items)) {
+                    $items = [$items];
+                }
                 $values = [$name => $value];
                 $isTargetValue = $key == $name || strpos($key, $name . '_') === 0;
                 if (strpos($key, '[]') !== false) {
@@ -49,6 +54,9 @@ class Validator extends Base
                 }
                 foreach ($values as $name => $value) {
                     foreach ($items as $item) {
+                        if (!is_array($item)) {
+                            $item = [$item];
+                        }
                         $isHit = false;
                         if (strpos($key, '*') === 0 || $isTargetValue) {
                             if (strpos($item[0], '/') === 0) {
@@ -57,7 +65,7 @@ class Validator extends Base
                                 } else {
                                     $tempValue = $value;
                                 }
-                                $isHit = preg_match($item[0], $tempValue);
+                                $isHit = !preg_match($item[0], $tempValue);
                             } else if (strpos($item[0], '!/') === 0) {
                                 if (is_array($value)) {
                                     $tempValue = implode(',', $value);
@@ -65,10 +73,10 @@ class Validator extends Base
                                     $tempValue = $value;
                                 }
                                 $regexp = substr($item[0], 1);
-                                $isHit = !preg_match($regexp, $tempValue);
+                                $isHit = preg_match($regexp, $tempValue);
                             } else {
                                 try {
-                                    $isHit = $this->safeEval($item[0], array_merge(['_self' => $value], $vars));
+                                    $isHit = !$this->safeEval($item[0], array_merge(['_self' => $value], $vars));
                                 } catch (Exception $e) {
                                     $errors['system'] = ['System Error.'];
                                 }
@@ -101,7 +109,7 @@ class Validator extends Base
         $tempCode = preg_replace('/".*?"/', '', $tempCode);
         $tempCode = preg_replace('/@"+?"/', '', $tempCode);
         $tempCode = str_replace(['\\n', '\\r', '\\t'], "\n", $tempCode);
-        if (preg_match_all('/(\$?)([A-Za-z][a-zA-Z_0-9]+)(|\()/', $tempCode, $matches)) {
+        if (preg_match_all('/(\$?)([A-Za-z_][a-zA-Z_0-9]+)([^(]|\()/', $tempCode, $matches)) {
             foreach ($matches[2] as $key => $value) {
                 if ($matches[1][$key] == '$') {
                     if (preg_match('/\\$' . $value . '=[$a-zA-Z0-9]/', $tempCode)) {
@@ -113,7 +121,7 @@ class Validator extends Base
                         throw new Exception($message);
                     }
                 } else {
-                    if ($matches[1][$key] == '(' && array_search($value, $allowFunctions) === false) {
+                    if ($matches[3][$key] == '(' && array_search($value, $allowFunctions) === false) {
                         $message = "condition error(function {$value} is not allowed):\n{$code}";
                         /** @noinspection PhpUnhandledExceptionInspection */
                         throw new Exception($message);
