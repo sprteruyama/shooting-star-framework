@@ -67,7 +67,7 @@ class Router
                 $controller->request = $request;
                 $controller->session = $session;
                 $controller->action = $method;
-                $actionMethod = $method . '_' . ucfirst(strtolower($request->method));
+                $actionMethod = $method . '__' . strtoupper($request->method);
                 $controller->path = str_replace(CONTROLLER_DIR, '', $controllerPath);
                 $primitiveMethods = get_class_methods('ShootingStar\\Controller');
                 if (array_search($method, $primitiveMethods) !== false) {
