@@ -2,6 +2,12 @@
 
 namespace ShootingStar;
 
+define('HTTP_GET', 'GET');
+define('HTTP_POST', 'POST');
+define('HTTP_PUT', 'PUT');
+define('HTTP_DELETE', 'DELETE');
+define('HTTP_HEAD', 'HEAD');
+
 class Request extends Base
 {
     public $method = null;
@@ -56,7 +62,12 @@ class Request extends Base
 
     public function isPost()
     {
-        return !empty($this->posts);
+        return $this->method == HTTP_POST;
+    }
+
+    public function isDelete()
+    {
+        return $this->method == HTTP_DELETE;
     }
 
     public function json()
