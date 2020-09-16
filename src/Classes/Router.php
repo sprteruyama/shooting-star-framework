@@ -30,7 +30,7 @@ class Router
                     View::out404();
                     return;
                 }
-                $parsedPath = preg_replace($regexp, $parsedPath, $to);
+                $parsedPath = preg_replace($regexp, $to, $parsedPath);
                 break;
             }
         }
