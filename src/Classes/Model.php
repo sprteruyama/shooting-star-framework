@@ -104,7 +104,7 @@ class Model extends Base
         }
     }
 
-    private function prepareSql(&$sql, &$params)
+    private function prepareSql($sql, &$params)
     {
         if (preg_match_all('/:([a-zA-Z0-9_]+)/', $sql, $matches)) {
             $index = 1;
@@ -115,6 +115,7 @@ class Model extends Base
                 $index++;
             }
         }
+        return $sql;
     }
 
     /**
@@ -137,7 +138,7 @@ class Model extends Base
             if (!$db) {
                 return false;
             }
-            $this->prepareSql($sql, $params);
+            $sql = $this->prepareSql($sql, $params);
             $statement = $db->prepare($sql);
             $this->prepareParams($statement, $params);
             $statement->execute();
@@ -164,7 +165,7 @@ class Model extends Base
             if (!$db) {
                 return false;
             }
-            $this->prepareSql($sql, $params);
+            $sql = $this->prepareSql($sql, $params);
             $statement = $db->prepare($sql);
             $this->prepareParams($statement, $params);
             $statement->execute();

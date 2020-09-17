@@ -201,4 +201,15 @@ class Controller extends Base
         header('Location: ' . $url);
         exit();
     }
+
+    public function addError($key, $value)
+    {
+        if (!$this->errors) {
+            $this->errors = [];
+        }
+        if (!isset($this->errors[$key])) {
+            $this->errors[$key] = [];
+        }
+        $this->errors[$key][] = $value;
+    }
 }
