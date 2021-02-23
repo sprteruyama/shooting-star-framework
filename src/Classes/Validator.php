@@ -43,7 +43,7 @@ class Validator extends Base
                     $items = [$items];
                 }
                 $values = [$name => $value];
-                $isTargetValue = $key == $name || strpos($key, $name . '_') === 0;
+                $isTargetValue = $key == $name || strpos($key, $name . '_') === 0 && !array_key_exists($key, $rules);
                 if (strpos($key, '[]') !== false) {
                     $key = str_replace('[]', '', $key);
                     $isTargetValue = $key == $name || strpos($name, $key . ',') === 0;

@@ -138,7 +138,7 @@ class View extends Base
     public function startForm($action = '', $method = 'POST')
     {
         $token = Session::getInstance()->token();
-        $html = "<form action='$action' method='$method'>";
+        $html = "<form action='$action' method='$method'  enctype='multipart/form-data'>";
         $html .= "<input name='__token__' type='hidden' value='$token'>";
         return $html;
     }

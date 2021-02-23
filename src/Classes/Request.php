@@ -17,6 +17,7 @@ class Request extends Base
     public $data = [];
     public $body = null;
     public $query = null;
+    public $files = [];
 
     public function __construct()
     {
@@ -26,6 +27,7 @@ class Request extends Base
         $this->gets = self::decodeArrayVariable($_GET);
         $this->data = array_merge($this->posts, $this->gets);
         $this->body = file_get_contents('php://input');
+        $this->files = $_FILES;
     }
 
     public function gets($key, $default = null)
@@ -41,6 +43,20 @@ class Request extends Base
     {
         if (isset($this->posts[$key])) {
             return $this->posts[$key];
+        } else {
+            return $default;
+        }
+    }
+
+    public function files($key, $default = null)
+    {
+        if (isset($this->files[$key])) {
+            $item = $this->files[$key];
+            if (is_uploaded_file($item['tmp_name'])) {
+                return $item;
+            } else {
+                return $default;
+            }
         } else {
             return $default;
         }

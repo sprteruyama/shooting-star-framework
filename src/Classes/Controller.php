@@ -83,8 +83,25 @@ class Controller extends Base
         $this->view->sets($vars);
     }
 
-    public function validate($rules, $vars, $isAll = false)
+    private function prepareVars($rules, $vars)
     {
+        if (!$vars) {
+            foreach ($rules as $name => $value) {
+                $vars[$name] = null;
+            }
+        } else {
+            foreach ($vars as $key => $value) {
+                if (is_numeric($key)) {
+                    $vars[$value] = null;
+                }
+            }
+        }
+        return $vars;
+    }
+
+    public function validate($rules, $vars = null, $isAll = false)
+    {
+        $vars = $this->prepareVars($rules, $vars);
         foreach ($vars as $name => $value) {
             $vars[$name] = $this->request->data($name, $value);
         }
@@ -94,8 +111,9 @@ class Controller extends Base
         return $vars;
     }
 
-    public function validatePost($rules, $vars)
+    public function validatePost($rules, $vars = null)
     {
+        $vars = $this->prepareVars($rules, $vars);
         if ($this->request->isPost()) {
             $base = $vars;
             foreach ($vars as $name => $value) {
@@ -112,8 +130,9 @@ class Controller extends Base
     }
 
 
-    public function validateGet($rules, $vars)
+    public function validateGet($rules, $vars = null)
     {
+        $vars = $this->prepareVars($rules, $vars);
         foreach ($vars as $name => $value) {
             $vars[$name] = $this->request->gets($name, $value);
         }

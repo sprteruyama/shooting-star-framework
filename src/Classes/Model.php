@@ -288,7 +288,11 @@ class Model extends Base
             if (strpos($key, '_') === 0) {
                 continue;
             }
-            $pares[] = "{$key}=:{$key}";
+            if (preg_match('/(\(|\))/', $value)) {
+                $pares[] = "{$key}={$value}";
+            } else {
+                $pares[] = "{$key}=:{$key}";
+            }
         }
         return implode(',', $pares);
     }
