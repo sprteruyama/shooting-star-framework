@@ -18,7 +18,7 @@ class Base
             $this->loadLibrary($lib);
         }
     }
-
+    
     public function isCli()
     {
         return !isset($_SERVER['HTTP_HOST']);

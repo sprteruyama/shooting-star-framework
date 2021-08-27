@@ -1,6 +1,7 @@
 <?php
 
 use ShootingStar\Config;
+use \ShootingStar\EnvFile;
 
 $dir = realpath(__DIR__);
 while (!preg_match('/vendor$/', $dir)) {
@@ -20,6 +21,8 @@ define('PUBLIC_DIR', APP_DIR . '/Public');
 define('LOG_DIR', ROOT_DIR . '/logs');
 define('TMP_DIR', ROOT_DIR . '/tmp');
 define('SHARE_DIR', ROOT_DIR . '/share');
+require_once CORE_DIR . '/Classes/EnvFile.php';
+EnvFile::decodeEnv();
 require_once CORE_DIR . '/Classes/Log.php';
 require_once CORE_DIR . '/Classes/Config.php';
 ini_set('display_errors', Config::get('debug') ? 1 : 0);
