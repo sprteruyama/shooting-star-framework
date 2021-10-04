@@ -20,6 +20,7 @@ class EnvFile
                 $items = explode('=', $line);
                 $value = '';
                 if (count($items) > 1) {
+                    putenv(trim($line));
                     for ($i = 1; $i < count($items); $i++) {
                         $value .= $items[$i];
                     }

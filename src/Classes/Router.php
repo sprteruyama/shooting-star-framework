@@ -10,6 +10,9 @@ class Router
 
     public static function startWeb()
     {
+        if (!isset($_SERVER['REQUEST_URI'])) {
+            return;
+        }
         $urlRoot = Config::get('url.root');
         if ($urlRoot == '/') {
             $urlRoot = '';
@@ -55,7 +58,6 @@ class Router
                     return;
                 }
                 $vars = array_slice($paths, $methodIndex + 1, count($paths) - ($methodIndex + 1));
-                /** @noinspection PhpIncludeInspection */
                 require_once CORE_DIR . '/Classes/Request.php';
                 $request = new Request();
                 $request->vars = $vars;

@@ -21,7 +21,7 @@ class Session
             ini_set('session.gc_divisor', Config::get('session.divisor', 1000));
             ini_set('session.gc_maxlifetime', Config::get('session.lifetime', 30 * 60));
             ini_set('session.use_cookies', 1);
-            ini_set('session.name', Config::get('session.cookie_name'));
+            ini_set('session.name', Config::get('session.cookie_name', 'session'));
             ini_set('session.cookie_lifetime', Config::get('session.lifetime', 30 * 60));
             session_start();
             self::$instance = new Session();
