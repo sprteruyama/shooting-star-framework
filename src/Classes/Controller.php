@@ -230,5 +230,6 @@ class Controller extends Base
             $this->errors[$key] = [];
         }
         $this->errors[$key][] = $value;
+        $this->set('errors', $this->errors);
     }
 }
