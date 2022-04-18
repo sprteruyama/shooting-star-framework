@@ -112,7 +112,7 @@ class View extends Base
         }
         $html .= '>';
         if ($innerText !== null) {
-            echo $innerText;
+            $html .= $innerText;
         }
         if ($tag != 'input') {
             $html .= "</{$tag}>";
@@ -176,7 +176,7 @@ class View extends Base
         if ($value !== null && $index == $value) {
             $options['checked'] = 'checked';
         }
-        return $this->outHtmlTag('input', $options, $label);
+        return $this->outHtmlTag('input', $options) . $label;
     }
 
     public function checkbox($name, $index, $label, $options = [])
