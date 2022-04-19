@@ -8,6 +8,41 @@ class Router
         '/' => false,
     ];
 
+    private static function createController($controllerName, $controllerPath, $paths, $methodIndex)
+    {
+        $method = isset($paths[$methodIndex]) && $paths[$methodIndex] ? $paths[$methodIndex] : 'index';
+        if (strpos($method, '_') === 0) {
+            return false;
+        }
+        $vars = array_slice($paths, $methodIndex + 1, count($paths) - ($methodIndex + 1));
+        require_once CORE_DIR . '/Classes/Request.php';
+        $request = new Request();
+        $request->vars = $vars;
+        $request->query = implode('/', $vars) . (isset($request->gets) ? '?' . http_build_query($request->gets) : '');
+        require_once CORE_DIR . '/Classes/Session.php';
+        $session = Session::getInstance();
+        /** @var Controller $controller */
+        $controller = new $controllerName();
+        $controller->request = $request;
+        $controller->session = $session;
+        $controller->action = $method;
+        $actionMethod = $method . '__' . strtoupper($request->method);
+        $controller->path = str_replace(CONTROLLER_DIR, '', $controllerPath);
+        $primitiveMethods = get_class_methods('ShootingStar\\Controller');
+        if (array_search($method, $primitiveMethods) !== false) {
+            return false;
+        }
+        if (method_exists($controller, $actionMethod) && is_callable([$controller, $actionMethod])) {
+            $method = $actionMethod;
+        } else if (!method_exists($controller, $method) || !is_callable([$controller, $method])) {
+            return false;
+        }
+        $controller->beforeHook();
+        call_user_func_array([$controller, $method], $vars);
+        $controller->afterHook();
+        return true;
+    }
+
     public static function startWeb()
     {
         if (!isset($_SERVER['REQUEST_URI'])) {
@@ -52,44 +87,21 @@ class Router
             }
             $controllerName = $path . 'Controller';
             if (ClassLoader::loadClass($controllerName, $controllerPath)) {
-                $method = isset($paths[$methodIndex]) && $paths[$methodIndex] ? $paths[$methodIndex] : 'index';
-                if (strpos($method, '_') === 0) {
-                    View::out404();
+                if (self::createController($controllerName, $controllerPath, $paths, $methodIndex - 1)) {
                     return;
-                }
-                $vars = array_slice($paths, $methodIndex + 1, count($paths) - ($methodIndex + 1));
-                require_once CORE_DIR . '/Classes/Request.php';
-                $request = new Request();
-                $request->vars = $vars;
-                $request->query = implode('/', $vars) . (isset($request->gets) ? '?' . http_build_query($request->gets) : '');
-                require_once CORE_DIR . '/Classes/Session.php';
-                $session = Session::getInstance();
-                /** @var Controller $controller */
-                $controller = new $controllerName();
-                $controller->request = $request;
-                $controller->session = $session;
-                $controller->action = $method;
-                $actionMethod = $method . '__' . strtoupper($request->method);
-                $controller->path = str_replace(CONTROLLER_DIR, '', $controllerPath);
-                $primitiveMethods = get_class_methods('ShootingStar\\Controller');
-                if (array_search($method, $primitiveMethods) !== false) {
-                    View::out404();
+                };
+                continue;
+            }
+            $controllerName = 'BaseController';
+            $controllerPath = CONTROLLER_DIR;
+            if (ClassLoader::loadClass($controllerName, $controllerPath)) {
+                if (self::createController($controllerName, $controllerPath, $paths, $methodIndex - 1)) {
                     return;
-                }
-                if (method_exists($controller, $actionMethod) && is_callable([$controller, $actionMethod])) {
-                    $method = $actionMethod;
-                } else if (!method_exists($controller, $method) || !is_callable([$controller, $method])) {
-                    View::out404();
-                    return;
-                }
-                $controller->beforeHook();
-                call_user_func_array([$controller, $method], $vars);
-                $controller->afterHook();
-                return;
+                };
+                continue;
             }
         }
         View::out404();
-        return;
     }
 
     public static function url($path, $isFull = false, $versionName = null)
