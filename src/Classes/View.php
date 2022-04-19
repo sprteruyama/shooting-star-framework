@@ -214,9 +214,11 @@ class View extends Base
 
     public function select($name, $labels, $items = [], $options = [])
     {
-        $isMultiple = isset($items['multiple']);
-        if (!isset($items['name'])) {
-            $items['name'] = $name . ($isMultiple ? '[]' : '');
+        $isMultiple = isset($options['multiple']);
+        if (!isset($options['name'])) {
+            $options['name'] = $name . ($isMultiple ? '[]' : '');
+        } else {
+            $options['name'] = $name;
         }
         $value = self::getValueByDot($this->vars, $name);
         $innerHtml = '';

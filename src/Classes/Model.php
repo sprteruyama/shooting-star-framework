@@ -299,7 +299,6 @@ class Model extends Base
 
     public function update($data, $where = '')
     {
-        $data = $this->cleanData($data);
         $now = $this->formattedDatetime();
         if (!$this->hasNoDateFields && !isset($data['modified'])) {
             $data['modified'] = $now;
@@ -309,16 +308,6 @@ class Model extends Base
             $sql .= " WHERE {$where}";
         }
         return $this->query($sql, $data) !== false;
-    }
-
-    public function cleanData($data)
-    {
-        foreach ($data as $key => $value) {
-            if (is_numeric($key)) {
-                unset($data[$key]);
-            }
-        }
-        return $data;
     }
 
     public function formattedDatetime($time = 0)
@@ -331,7 +320,6 @@ class Model extends Base
 
     public function insert($data)
     {
-        $data = $this->cleanData($data);
         $now = $this->formattedDatetime();
         if (!$this->hasNoDateFields) {
             if (!isset($data['modified'])) {
@@ -354,7 +342,6 @@ class Model extends Base
 
     public function updateOrInsert($data, $where = '')
     {
-        $data = $this->cleanData($data);
         $result = $this->selectOne('COUNT(*)', $where, $data);
         if ($result) {
             return $this->update($data, $where);

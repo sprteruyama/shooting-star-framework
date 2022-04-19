@@ -1,7 +1,7 @@
 <?php
 
 use ShootingStar\Config;
-use \ShootingStar\EnvFile;
+use ShootingStar\EnvFile;
 
 $dir = realpath(__DIR__);
 while (!preg_match('/vendor$/', $dir)) {
